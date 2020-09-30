@@ -8,241 +8,137 @@
 
 import SwiftUI
 
+enum CalculatorButton: String {
+    
+    case zero, one, two, three, four, five, six, seven, eight, nine, dot
+    case equals, plus, minus, multiply, divide
+    case ac, plusMinus, percent
+    
+    var backgroundColor: Color {
+        switch self {
+        case .equals, .plus, .minus, .multiply, .divide:
+            return Color(#colorLiteral(red: 0.2392156869, green: 0.6745098233, blue: 0.9686274529, alpha: 1))
+        case .ac, .plusMinus, .percent:
+            return Color(#colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1))
+        default:
+            return Color(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1))
+        }
+    }
+    
+    var title: String {
+        switch self {
+        case .zero: return "0"
+        case .one: return "1"
+        case .two: return "2"
+        case .three: return "3"
+        case .four: return "4"
+        case .five: return "5"
+        case .six: return "6"
+        case .seven: return "7"
+        case .eight: return "8"
+        case .nine: return "9"
+        case .plusMinus: return "+/-"
+        case .percent: return "%"
+        case .divide: return "÷"
+        case .multiply: return "x"
+        case .minus: return "-"
+        case .plus: return "+"
+        case .equals: return "="
+        case .dot: return "."
+        default: return "AC"
+        }
+    }
+    
+}
+
+class GlobalEnvironment: ObservableObject {
+    
+    @Published var displayText = "0"
+    
+    func buttonInput(button: CalculatorButton) {
+        if button == .ac {
+            self.displayText = "0"
+        } else {
+            self.displayText = button.title
+        }
+    }
+    
+}
+
+
 struct ContentView: View {
+    
+    @EnvironmentObject var environment: GlobalEnvironment
+    
+    let buttonValues: [[CalculatorButton]] = [
+        [.ac, .plusMinus, .percent, .divide],
+        [.seven, .eight, .nine, .multiply],
+        [.four, .five, .six, .minus],
+        [.one, .two, .three, .plus],
+        [.zero, .dot, .equals]
+    ]
     
     var body: some View {
         
         VStack(spacing: 10) {
-                
-                Text("0")
-                    .multilineTextAlignment(.trailing)
-                    .font(.system(size: 80))
-                    .frame(minWidth: 0,
-                           maxWidth: .infinity,
-                           minHeight: 0,
-                           maxHeight: .infinity,
-                           alignment: .bottomTrailing)
-                    .padding(.trailing, 33)
-                
-                // First row of buttons
+            
+            HStack {
+                Spacer()
+                Text(self.environment.displayText).font(.system(size: UIScreen.main.bounds.height * 0.1))
+            }.padding()
+            
+            ForEach(buttonValues, id: \.self) { row in
                 HStack {
-                    Button(action: {
-                        print("AC tapped")
-                    }) {
-                        Text("AC")
-                            .frame(width: 80, height: 80)
-                            .background(Color(#colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(80 / 2)
-                            .font(.title)
-                    }
-                    Button(action: {
-                        print("+/- tapped")
-                    }) {
-                        Text("+/-")
-                            .frame(width: 80, height: 80)
-                            .background(Color(#colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(80 / 2)
-                            .font(.title)
-                    }
-                    Button(action: {
-                        print("% tapped")
-                    }) {
-                        Text("%")
-                            .frame(width: 80, height: 80)
-                            .background(Color(#colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(80 / 2)
-                            .font(.title)
-                    }
-                    Button(action: {
-                        print("÷ tapped")
-                    }) {
-                        Text("÷")
-                            .frame(width: 80, height: 80)
-                            .background(Color(#colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(80 / 2)
-                            .font(.largeTitle)
+                    ForEach(row, id: \.self) { button in
+                        
+                        CalculatorButtonView(button: button)
+                        
                     }
                 }
-                
-                // Second row of buttons
-                HStack {
-                    Button(action: {
-                        print("7 tapped")
-                    }) {
-                        Text("7")
-                            .frame(width: 80, height: 80)
-                            .background(Color(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(80 / 2)
-                            .font(.title)
-                    }
-                    Button(action: {
-                        print("8 tapped")
-                    }) {
-                        Text("8")
-                            .frame(width: 80, height: 80)
-                            .background(Color(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(80 / 2)
-                            .font(.title)
-                    }
-                    Button(action: {
-                        print("9 tapped")
-                    }) {
-                        Text("9")
-                            .frame(width: 80, height: 80)
-                            .background(Color(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(80 / 2)
-                            .font(.title)
-                    }
-                    Button(action: {
-                        print("× tapped")
-                    }) {
-                        Text("×")
-                            .frame(width: 80, height: 80)
-                            .background(Color(#colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(80 / 2)
-                            .font(.largeTitle)
-                    }
-                }
-                
-                // Third row of buttons
-                HStack {
-                    Button(action: {
-                        print("4 tapped")
-                    }) {
-                        Text("4")
-                            .frame(width: 80, height: 80)
-                            .background(Color(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(80 / 2)
-                            .font(.title)
-                    }
-                    Button(action: {
-                        print("5 tapped")
-                    }) {
-                        Text("5")
-                            .frame(width: 80, height: 80)
-                            .background(Color(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(80 / 2)
-                            .font(.title)
-                    }
-                    Button(action: {
-                        print("6 tapped")
-                    }) {
-                        Text("6")
-                            .frame(width: 80, height: 80)
-                            .background(Color(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(80 / 2)
-                            .font(.title)
-                    }
-                    Button(action: {
-                        print("− tapped")
-                    }) {
-                        Text("−")
-                            .frame(width: 80, height: 80)
-                            .background(Color(#colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(80 / 2)
-                            .font(.largeTitle)
-                    }
-                }
-                
-                // Fourth row of buttons
-                HStack {
-                    Button(action: {
-                        print("1 tapped")
-                    }) {
-                        Text("1")
-                            .frame(width: 80, height: 80)
-                            .background(Color(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(80 / 2)
-                            .font(.title)
-                    }
-                    Button(action: {
-                        print("2 tapped")
-                    }) {
-                        Text("2")
-                            .frame(width: 80, height: 80)
-                            .background(Color(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(80 / 2)
-                            .font(.title)
-                    }
-                    Button(action: {
-                        print("3 tapped")
-                    }) {
-                        Text("3")
-                            .frame(width: 80, height: 80)
-                            .background(Color(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(80 / 2)
-                            .font(.title)
-                    }
-                    Button(action: {
-                        print("+ tapped")
-                    }) {
-                        Text("+")
-                            .frame(width: 80, height: 80)
-                            .background(Color(#colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(80 / 2)
-                            .font(.largeTitle)
-                    }
-                }
-                
-                // Last row of buttons
-                HStack {
-                    Button(action: {
-                        print("0 tapped")
-                    }) {
-                        Text("0")
-                            .frame(width: 160, height: 80)
-                            .background(Color(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(160 / 2)
-                            .font(.title)
-                    }
-                    Button(action: {
-                        print(". tapped")
-                    }) {
-                        Text(".")
-                            .frame(width: 80, height: 80)
-                            .background(Color(#colorLiteral(red: 0.2549019754, green: 0.2745098174, blue: 0.3019607961, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(80 / 2)
-                            .font(.largeTitle)
-                    }
-                    Button(action: {
-                        print("= tapped")
-                    }) {
-                        Text("=")
-                            .frame(width: 80, height: 80)
-                            .background(Color(#colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1)))
-                            .foregroundColor(.white)
-                            .cornerRadius(80 / 2)
-                            .font(.title)
-                    }
-                }
-
+            
             }
-        .frame(minWidth: 0,
-               maxWidth: .infinity,
-               minHeight: 0,
-               maxHeight: .infinity,
-               alignment: .bottom)
+        }
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .bottom)
         .padding(.bottom, 15)
+        
     }
+    
 }
+
+struct CalculatorButtonView: View {
+    
+    var button: CalculatorButton
+    
+    @EnvironmentObject var environment: GlobalEnvironment
+    
+    var body: some View {
+        
+        Button(action: {
+            self.environment.buttonInput(button: button)
+        }, label: {
+            Text(button.title)
+                .font(.title)
+                .foregroundColor(.white)
+                .frame(width: self.buttonWidth(button: button), height: self.buttonHeight())
+                .background(button.backgroundColor)
+                .cornerRadius(self.buttonHeight())
+        })
+        
+    }
+    
+    func buttonWidth(button: CalculatorButton) -> CGFloat {
+        if button == .zero {
+            return (UIScreen.main.bounds.width - 4 * 10) / 4 * 2
+        }
+        return (UIScreen.main.bounds.width - 5 * 10) / 4
+    }
+    
+    func buttonHeight() -> CGFloat {
+        return (UIScreen.main.bounds.width - 5 * 10) / 4
+    }
+    
+}
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
